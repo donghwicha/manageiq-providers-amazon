@@ -248,7 +248,7 @@ class ManageIQ::Providers::Amazon::AgentCoordinator
         :placement            => {:availability_zone => zone_name},
         :tag_specifications   => [{:resource_type => "instance", :tags => [{:key => "Name", :value => label}]}],
         :network_interfaces   => [{
-          :associate_public_ip_address => true,
+          :associate_public_ip_address => false,
           :delete_on_termination       => true,
           :device_index                => 0,
           :subnet_id                   => subnet_id,
@@ -283,7 +283,8 @@ class ManageIQ::Providers::Amazon::AgentCoordinator
 
   def setup_agent(instance)
     # Somehow instance.public_dns_name is empty, need to reinitialize to get it back
-    ip = ec2.instance(instance.id).public_dns_name || raise("Failed to get agent's public ip!")
+    ip = ec2.instance(instance.id).private_ip_address || raise("Failed to get agent's private ip!")
+    
     key_name = instance.key_name
     auth_key = get_keypair(key_name).try(:auth_key)
     raise("Key [#{key_name}] is missing. Cannot SSH to the agent:#{instance.id}") if auth_key.nil?
