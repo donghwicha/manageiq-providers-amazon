@@ -527,6 +527,10 @@ class ManageIQ::Providers::Amazon::AgentCoordinator
         {
           :name   => "vpc-id",
           :values => [vpc_id]
+        },
+        {
+          :name   => "tag:Name",
+          :values => ["*jh*"]
         }
       ]
     ).subnets
